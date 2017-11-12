@@ -45,6 +45,7 @@ class Run
             exit;
         }
 
+        $this->service = (string)$getOpt->getOption('service');
         if (empty($this->service)) {
             throw new HookException('Service is empty', HookException::PARSE_ARGUMENTS);
         }
