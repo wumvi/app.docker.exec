@@ -1,0 +1,24 @@
+{
+  "name": "wumvi/certbot",
+  "description": "CertBot update",
+  "require": {
+    "wumvi/docker-api": "1.0.*",
+    "ulrichsg/getopt-php": "^3.0",
+    "sendpulse/rest-api": "1.0.1"
+  },
+
+  "autoload": {
+    "psr-4": {
+      "CertBot\\": "src"
+    }
+  },
+
+  "require-dev": {
+  },
+  "authors": [
+    {
+      "name": "Kozlenko Vitaliy",
+      "role": "Developer"
+    }
+  ]
+}
