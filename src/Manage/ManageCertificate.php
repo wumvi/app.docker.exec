@@ -99,7 +99,7 @@ class ManageCertificate
         }
 
         $this->email = (string)$getOpt->getOption('email');
-        if (empty($this->domain)) {
+        if (empty($this->email)) {
             throw new ManageException('Email is empty. Use --email or -e', ManageException::PARSE_ARGUMENTS);
         }
 
@@ -132,7 +132,7 @@ class ManageCertificate
         $domainId = $result['id'] ?? null;
 
         if ($this->isRemove) {
-            $cmd = sprintf(
+            $cmd = vsprintf(
                 'certbot delete --cert-name %s > /dev/stdout',
                 [escapeshellarg($this->domain),]
             );
@@ -151,7 +151,7 @@ class ManageCertificate
             return;
         }
 
-        $cmd = sprintf(
+        $cmd = vsprintf(
             'certbot certonly --agree-tos --email %s -d %s --standalone --preferred-challenges http > /dev/stdout',
             [escapeshellarg($this->email), escapeshellarg($this->domain),]
         );
