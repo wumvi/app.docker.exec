@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace CertBot\Hook;
 
 use CertBot\Hook\Exception\HookException;
+use CertBot\Manage\ManageCertificate;
 use DockerApi\Arguments\Exec\Prepare;
 use DockerApi\Containers;
 use DockerApi\Exec;
@@ -62,10 +63,9 @@ class ExecCmdInContainer
     public function run(): void
     {
         $error = '';
-        $dbName = $this->currentDir . 'data/domains.sqlite';
-        $sqlCon = new \SQLite3($dbName);
+        $sqlCon = new \SQLite3(ManageCertificate::DATABASE_NAME);
         if (!$sqlCon) {
-            $msg = vsprintf('Error to open db "%s". Msg "%s"', [$dbName, $error,]);
+            $msg = vsprintf('Error to open db "%s". Msg "%s"', [ManageCertificate::DATABASE_NAME, $error,]);
             throw new HookException($msg, HookException::ERROR_TO_OPEN_DB);
         }
 

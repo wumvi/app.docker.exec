@@ -35,6 +35,11 @@ class ManageCertificate
     private $currentDir;
 
     /**
+     *
+     */
+    const DATABASE_NAME = '/etc/letsencrypt/domains.sqlite';
+
+    /**
      * ManageCertificate constructor.
      *
      * @param bool $currentDir
@@ -112,10 +117,9 @@ class ManageCertificate
     public function run()
     {
         $error = '';
-        $dbName = $this->currentDir . 'data/domains.sqlite';
-        $sqlCon = new \SQLite3($dbName);
+        $sqlCon = new \SQLite3(self::DATABASE_NAME);
         if (!$sqlCon) {
-            $msg = vsprintf('Error to open db "%s". Msg "%s"', [$dbName, $error,]);
+            $msg = vsprintf('Error to open db "%s". Msg "%s"', [self::DATABASE_NAME, $error,]);
             throw new ManageException($msg, ManageException::ERROR_TO_OPEN_DB);
         }
 
