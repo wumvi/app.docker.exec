@@ -156,9 +156,10 @@ class ManageCertificate
         }
 
         $cmd = vsprintf(
-            'certbot certonly --webroot -w /etc/letsencrypt/www/ --agree-tos --email %s -d %s > /dev/stdout',
+            'certbot certonly --webroot -w /etc/letsencrypt/www/ --agree-tos --hsts --email %s -d %s > /dev/stdout',
             [escapeshellarg($this->email), escapeshellarg($this->domain),]
         );
+
         exec($cmd, $output, $status);
         $output = implode("\n", $output);
         if ($status !== 0) {

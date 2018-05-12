@@ -36,10 +36,9 @@ class ExecCmdInContainer
      */
     public function renew(int $domainId, string $domainName): bool
     {
-        //
         $file = vsprintf('/tmp/%s.cert', [$domainId,]);
         $cmd = vsprintf(
-            'certbot renew --renew-hook "echo 1 > %s" --cert-name %s >> /dev/stdout',
+            'certbot renew -w /etc/letsencrypt/www/ --webroot --hsts --renew-hook "echo 1 > %s" --cert-name %s >> /dev/stdout',
             [$file, escapeshellarg($domainName),]
         );
         exec($cmd, $output, $status);
