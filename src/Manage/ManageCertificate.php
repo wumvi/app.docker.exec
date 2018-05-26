@@ -9,6 +9,9 @@ use GetOpt\Option;
 
 class ManageCertificate
 {
+    private const TYPE_NGINX = 'nginx';
+    private const TYPE_HTTP = 'http';
+
     /**
      * @var string[]
      */
@@ -33,6 +36,11 @@ class ManageCertificate
      * @var string
      */
     private $currentDir;
+
+    /**
+     * @var string
+     */
+    private $type;
 
     /**
      *
@@ -80,6 +88,10 @@ class ManageCertificate
         $option->setDescription('Remove record');
         $getOpt->addOption($option);
 
+        $option = new Option('t', 'type', GetOpt::OPTIONAL_ARGUMENT);
+        $option->setDescription('Type authorization: nginx, http');
+        $getOpt->addOption($option);
+
         try {
             $getOpt->process();
         } catch (\Exception $ex) {
@@ -106,6 +118,13 @@ class ManageCertificate
         $this->email = (string)$getOpt->getOption('email');
         if (empty($this->email)) {
             throw new ManageException('Email is empty. Use --email or -e', ManageException::PARSE_ARGUMENTS);
+        }
+
+        $this->type = $getOpt->getOption('type');
+        $allowTypes = [self::TYPE_NGINX, self::TYPE_HTTP];
+        if (!in_array($this->type, [self::TYPE_NGINX, self::TYPE_HTTP])) {
+            $msg = vsprintf('Wrong type value. Use --type=%s or --type=%s', $allowTypes);
+            throw new ManageException($msg, ManageException::PARSE_ARGUMENTS);
         }
 
         $this->isRemove = (bool)$getOpt->getOption('remove');
@@ -155,9 +174,15 @@ class ManageCertificate
             return;
         }
 
+        if ($this->type === self::TYPE_NGINX) {
+            $auth = '--webroot';
+        } else {
+            $auth = '--standalone --preferred-challenges http';
+        }
+
         $cmd = vsprintf(
-            'certbot certonly --webroot -w /etc/letsencrypt/www/ --agree-tos --email %s -d %s > /dev/stdout',
-            [escapeshellarg($this->email), escapeshellarg($this->domain),]
+            'certbot certonly %s -w /etc/letsencrypt/www/ --agree-tos --email %s -d %s > /dev/stdout',
+            [$auth, escapeshellarg($this->email), escapeshellarg($this->domain)]
         );
         exec($cmd, $output, $status);
         $output = implode("\n", $output);
